@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #1e1e2e;
+      font-family: Arial, sans-serif;
+    }
+    .calc {
+      background: #27293d;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      width: 320px;
+    }
+    .display {
+      background: #16181f;
+      color: #fff;
+      font-size: 2.2rem;
+      text-align: right;
+      padding: 20px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      min-height: 70px;
+      word-break: break-all;
+      overflow-wrap: break-word;
+    }
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      font-size: 1.3rem;
+      padding: 18px 0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #3b3f58;
+      color: #fff;
+      transition: filter 0.15s;
+    }
+    button:hover { filter: brightness(1.2); }
+    button:active { filter: brightness(0.9); }
+    .op { background: #f59e0b; }
+    .clear { background: #ef4444; }
+    .equals { background: #22c55e; grid-column: span 2; }
+  </style>
+</head>
+<body>
+  <div class="calc">
+    <div class="display" id="display">0</div>
+    <div class="keys">
+      <button class="clear" id="clear">C</button>
+      <button class="clear" id="backspace">⌫</button>
+      <button class="op" id="mod">%</button>
+      <button class="op" id="div">÷</button>
+      <button id="seven">7</button>
+      <button id="eight">8</button>
+      <button id="nine">9</button>
+      <button class="op" id="mul">×</button>
+      <button id="four">4</button>
+      <button id="five">5</button>
+      <button id="six">6</button>
+      <button class="op" id="sub">−</button>
+      <button id="one">1</button>
+      <button id="two">2</button>
+      <button id="three">3</button>
+      <button class="op" id="add">+</button>
+      <button id="zero">0</button>
+      <button id="dot">.</button>
+      <button class="equals" id="equals">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    let current = '0';
+    let previous = null;
+    let operator = null;
+    let resetOnNext = false;
+
+    function updateDisplay() {
+      display.textContent = current;
+    }
+
+    function inputDigit(digit) {
+      if (resetOnNext) {
+        current = String(digit);
+        resetOnNext = false;
+      } else {
+        if (current === '0') {
+          current = String(digit);
+        } else {
+          current += digit;
+        }
+      }
+      updateDisplay();
+    }
+
+    function inputDot() {
+      if (resetOnNext) {
+        current = '0.';
+        resetOnNext = false;
+      } else if (!current.includes('.')) {
+        current += '.';
+      }
+      updateDisplay();
+    }
+
+    function setOperator(op) {
+      if (operator !== null) {
+        calculate();
+      }
+      previous = current;
+      operator = op;
+      resetOnNext = true;
+    }
+
+    function calculate() {
+      if (operator === null || previous === null) return;
+      const a = parseFloat(previous);
+      const b = parseFloat(current);
+      let result;
+      switch (operator) {
+        case '+': result = a + b; break;
+        case '-': result = a - b; break;
+        case '*': result = a * b; break;
+        case '/': result = b === 0 ? 'Error' : a / b; break;
+        case '%': result = a % b; break;
+      }
+      current = String(result);
+      previous = null;
+      operator = null;
+      resetOnNext = true;
+      updateDisplay();
+    }
+
+    function clearAll() {
+      current = '0';
+      previous = null;
+      operator = null;
+      resetOnNext = false;
+      updateDisplay();
+    }
+
+    function backspace() {
+      if (resetOnNext) return;
+      if (current.length > 1) {
+        current = current.slice(0, -1);
+      } else {
+        current = '0';
+      }
+      updateDisplay();
+    }
+
+    const ops = {
+      div: '/', mul: '*', sub: '-', add: '+', mod: '%'
+    };
+
+    for (let i = 0; i <= 9; i++) {
+      document.getElementById(i === 0 ? 'zero' : ['one','two','three','four','five','six','seven','eight','nine'][i - 1])
+        .addEventListener('click', () => inputDigit(i));
+    }
+    document.getElementById('dot').addEventListener('click', inputDot);
+    document.getElementById('equals').addEventListener('click', calculate);
+    document.getElementById('clear').addEventListener('click', clearAll);
+    document.getElementById('backspace').addEventListener('click', backspace);
+    for (const id in ops) {
+      document.getElementById(id).addEventListener('click', () => setOperator(ops[id]));
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (/[0-9]/.test(e.key)) inputDigit(Number(e.key));
+      else if (e.key === '.') inputDot();
+      else if (e.key === '+') setOperator('+');
+      else if (e.key === '-') setOperator('-');
+      else if (e.key === '*') setOperator('*');
+      else if (e.key === '/') { e.preventDefault(); setOperator('/'); }
+      else if (e.key === 'Enter' || e.key === '=') calculate();
+      else if (e.key === 'Backspace') backspace();
+      else if (e.key === 'Escape') clearAll();
+    });
+  </script>
+</body>
+</html>
