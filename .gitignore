@@ -1,0 +1,54 @@
+# Visual Studio cache/options directory
+.vs/
+
+# Visual Studio Code cache/options directory
+.vscode/
+
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# Local History for Visual Studio
+.localhistory/
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet Personal packages
+.nuget/
+
+# Package recovery files
+*.nupkg
+*.snupkg
+
+# NuGet v3's project.json files and its related lockfile
+project.lock.json
+project.assets.json
+
+# Windows build output
+*.msi
+*.appx
+*.appxbundle
+*.msix
+
+# Mac files
+.DS_Store
